@@ -46,15 +46,14 @@ class Deprecated:
         @wraps(cls_or_func)
         def new_func(*args, **kwargs):
             # Ensure that the warning is seen
-            current_action_level = warnings.filters[0][0]
-            warnings.simplefilter("always", DeprecationWarning)
-            warnings.warn_explicit(
-                message,
-                category=DeprecationWarning,
-                filename=filename,
-                lineno=line_number,
-            )
-            warnings.simplefilter(current_action_level, DeprecationWarning)
+            with warnings.catch_warnings():
+                warnings.simplefilter("always", DeprecationWarning)
+                warnings.warn_explicit(
+                    message,
+                    category=DeprecationWarning,
+                    filename=filename,
+                    lineno=line_number,
+                )
             return cls_or_func(*args, **kwargs)
 
         return new_func
